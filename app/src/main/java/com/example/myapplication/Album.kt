@@ -1,4 +1,6 @@
 package com.example.myapplication
 
-class Album {
-}
+data class Album (
+    val album_title:String,
+    val album_length:Int
+)

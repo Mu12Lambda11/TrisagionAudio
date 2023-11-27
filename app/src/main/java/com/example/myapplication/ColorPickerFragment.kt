@@ -1,4 +1,8 @@
 package com.example.myapplication
 
-class ColorPickerFragment {
+import androidx.fragment.app.DialogFragment
+import androidx.navigation.fragment.navArgs
+
+class ColorPickerFragment : DialogFragment(){
+
 }

@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Trisagion Audio</string>
+    <string name="song_title">Filler Song Title</string>
+    <string name="song_length">0:00</string>
 </resources>

@@ -1,4 +1,6 @@
 package com.example.myapplication
 
-class MediaPlayerFragment {
+import androidx.fragment.app.Fragment
+
+class MediaPlayerFragment :Fragment() {
 }
