@@ -1,35 +1,39 @@
 package com.example.myapplication
 
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.databinding.ListItemSongBinding
 
 class SongListAdapter (
     private val songs: List<Song>,
     private val onSongClicked: (songTitle:String)-> Unit):RecyclerView.Adapter<SongHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongHolder {
-
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = ListItemSongBinding.inflate(inflater,parent, false)
+        return SongHolder(binding)
     }
 
     override fun getItemCount()=songs.size
 
     override fun onBindViewHolder(holder: SongHolder, position: Int) {
-        val songs = songs[position]
+        val song = songs[position]
         holder.bind(song, onSongClicked)
     }
 
 }
 }
 
-class SongHolder(songView: View) : RecyclerView.ViewHolder(songView){
+class SongHolder(private val binding: ListItemSongBinding) : RecyclerView.ViewHolder(binding.root){
 
-    val imageView: ImageView = songView.findViewById(R.id.album_art)
-    val titleView: TextView = songView.findViewById(R.id.song_title)
-    val lengthView: TextView = songView.findViewById(R.id.song_length)
 
     fun bind(song:Song, onSongClicked: (songTitle: String) -> Unit){
+        binding.songTitle.text=song.title
+        binding.songLength.text=song.length
+        binding.albumArt.setImageBitmap(song.albumArt)
 
+        binding.root.setOnClickListener(){
+            onSongClicked(song.title)
+        }
     }
 }

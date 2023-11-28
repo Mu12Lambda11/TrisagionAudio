@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 
 class SongListFragment : Fragment(){
 
-    //private val songListViewModel: SongListViewModel by viewModels()
+    private val songListViewModel: SongListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,11 +1,13 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id ("androidx.navigation.safeargs")
 }
 
 android {
     namespace = "com.example.myapplication"
     compileSdk = 34
+
 
     defaultConfig {
         applicationId = "com.example.myapplication"
@@ -33,6 +35,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        viewBinding=true
+    }
+
 }
 
 dependencies {
