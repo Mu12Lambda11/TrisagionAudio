@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.databinding.ListItemSongBinding
 
 class SongListAdapter (
-    private val songs: List<Song>,
+    private val songs: ArrayList<Song>,
     private val onSongClicked: (songTitle:String)-> Unit):RecyclerView.Adapter<SongHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -22,15 +22,15 @@ class SongListAdapter (
     }
 
 }
-}
+
 
 class SongHolder(private val binding: ListItemSongBinding) : RecyclerView.ViewHolder(binding.root){
 
 
     fun bind(song:Song, onSongClicked: (songTitle: String) -> Unit){
         binding.songTitle.text=song.title
-        binding.songLength.text=song.length
-        binding.albumArt.setImageBitmap(song.albumArt)
+        binding.songLength.text=song.duration
+        //binding.albumArt.setImageBitmap(song.albumArt)
 
         binding.root.setOnClickListener(){
             onSongClicked(song.title)

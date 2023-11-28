@@ -6,9 +6,10 @@ import java.util.Date
 import java.util.UUID
 
 data class Song (
-        val title : String,
-        val length : String,
+        var title : String,
+        val path: String,
+        val duration : String,
         val artist: String,
-        val album: String,
-        val albumArt: Bitmap
+        val album: String
 )
+

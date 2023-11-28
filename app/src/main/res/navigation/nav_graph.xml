@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/songListFragment">
 
     <fragment
         android:id="@+id/songListFragment"
         android:name="com.example.myapplication.SongListFragment"
-        android:label="SongListFragment" >
+        android:label="SongListFragment"
+        tools:layout="@layout/fragment_song_list">
         <action
-            android:id="@+id/action_songListFragment_to_songDetailFragment"
+            android:id="@+id/show_song_detail"
             app:destination="@id/songDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/songDetailFragment"
         android:name="com.example.myapplication.SongDetailFragment"
-        android:label="SongDetailFragment" />
+        android:label="SongDetailFragment"
+        tools:layout="@layout/fragment_song_detail"/>
 </navigation>

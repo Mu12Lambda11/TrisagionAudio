@@ -1,4 +1,10 @@
 package com.example.myapplication
 
-class TrisagionApp {
+import android.app.Application
+
+class TrisagionApp: Application() {
+    override fun onCreate(){
+        super.onCreate()
+        SongRepository.initialize(this)
+    }
 }
