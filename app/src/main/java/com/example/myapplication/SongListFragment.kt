@@ -2,11 +2,15 @@ package com.example.myapplication
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -21,12 +25,13 @@ class SongListFragment : Fragment(){
             "Cannot access binding because it is null. Is the view visible?"
         }
 
-    private val songListViewModel: SongListViewModel by viewModels()
+     val songListViewModel: SongListViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //TODO: update
-        setHasOptionsMenu(true)
+        //setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -55,5 +60,8 @@ class SongListFragment : Fragment(){
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding=null
     }
+
+
 }

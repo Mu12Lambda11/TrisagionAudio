@@ -9,21 +9,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class SongListViewModel(application: Application) : AndroidViewModel(application){
+class SongListViewModel() : ViewModel(){
 
 
     private val songRepository=SongRepository.get()
 
-    //private val _songs :MutableStateFlow<ArrayList<Song>> =MutableStateFlow(ArrayList<Song>())
+    var songs= ArrayList<Song>()
 
-    val songs= ArrayList<Song>()
-
-    private val context = getApplication<Application>().applicationContext
 
 
     init{
         viewModelScope.launch {
-            songRepository.getSongs(context)
+            songs=songRepository.sendSongs()
         }
     }
 }

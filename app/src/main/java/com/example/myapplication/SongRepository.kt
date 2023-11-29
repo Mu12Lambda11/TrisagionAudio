@@ -11,40 +11,11 @@ import java.lang.IllegalStateException
 
 class SongRepository private constructor (context: Context){
 
-    fun getSongs(context: Context): ArrayList<Song> {
-        val allSongs= ArrayList<Song>()
-        val uri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        val projection : Array<String> =
-            arrayOf(MediaStore.Audio.Media.ALBUM,
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.DURATION,
-                MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.ARTIST)
+    val _main = MainActivity.get()
+    val songs =_main.songs
 
-        val cursor: Cursor? = context.contentResolver.query(uri, projection, null,null,null)
-
-        if(cursor!=null){
-            while(cursor.moveToNext()){
-                val newAlbum: String = cursor.getString(0)
-                val newTitle: String = cursor.getString(1)
-                val newDuration: String = cursor.getString(2)
-                val newPath: String = cursor.getString(3)
-                val newArtist: String = cursor.getString(4)
-
-
-                val newSong= Song(newTitle,newPath,newDuration,newArtist,newAlbum)
-                //log to check
-                Log.e("path "+newPath,"Title:  "+newTitle,)
-                allSongs.add(newSong)
-            }
-            cursor.close()
-        }
-        val flex :Flow<ArrayList<Song>> =
-
-    }
-
-    suspend fun getSong(){
-
+    suspend fun sendSongs(): ArrayList<Song> {
+        return songs
     }
 
     //singleton behavior
