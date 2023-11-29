@@ -1,15 +1,21 @@
 package com.example.myapplication
 
+import android.content.Context
+import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.myapplication.databinding.ListItemSongBinding
 
 class SongListAdapter (
+    private val context: Context,
     private val songs: ArrayList<Song>,
-    private val onSongClicked: (songTitle:String)-> Unit):RecyclerView.Adapter<SongHolder>(){
+    private val onSongClicked: (songPath:String)-> Unit):RecyclerView.Adapter<SongHolder>(){
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongHolder {
-        val inflater = LayoutInflater.from(parent.context)
+        val inflater = LayoutInflater.from(context)
         val binding = ListItemSongBinding.inflate(inflater,parent, false)
         return SongHolder(binding)
     }
@@ -17,9 +23,11 @@ class SongListAdapter (
     override fun getItemCount()=songs.size
 
     override fun onBindViewHolder(holder: SongHolder, position: Int) {
-        val song = songs[position]
-        holder.bind(song, onSongClicked)
+        val songData = songs[position]
+        holder.bind(songData, onSongClicked, context)
     }
+
+
 
 }
 
@@ -27,13 +35,29 @@ class SongListAdapter (
 class SongHolder(private val binding: ListItemSongBinding) : RecyclerView.ViewHolder(binding.root){
 
 
-    fun bind(song:Song, onSongClicked: (songTitle: String) -> Unit){
+    fun bind(song:Song, onSongClicked: (songTitle: String) -> Unit, context: Context){
         binding.songTitle.text=song.title
         binding.songLength.text=song.duration
-        //binding.albumArt.setImageBitmap(song.albumArt)
 
-        binding.root.setOnClickListener(){
-            onSongClicked(song.title)
+        //album art retrieval
+        val image = getAlbumArt(song.path)
+        if(image!=null){
+            Glide.with(context).asBitmap().load(image).into(binding.albumArt)
+
+        }else{
+            Glide.with(context).asBitmap().load(R.drawable.ic_music).into(binding.albumArt)
         }
+
+        //click listener
+        binding.root.setOnClickListener(){
+            onSongClicked(song.path)
+        }
+    }
+    private fun getAlbumArt(path: String): ByteArray? {
+        val retriever = MediaMetadataRetriever()
+        retriever.setDataSource(path)
+        val obtainedArt =retriever.embeddedPicture
+        retriever.release()
+        return obtainedArt
     }
 }

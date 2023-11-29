@@ -9,21 +9,30 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import java.lang.IllegalStateException
 
-class SongRepository private constructor (context: Context){
+class SongRepository private constructor (context: Context, givenSongsList: ArrayList<Song>){
 
-    val _main = MainActivity.get()
-    val songs =_main.songs
+     private val songs =givenSongsList
 
-    suspend fun sendSongs(): ArrayList<Song> {
+     fun sendSongs(): ArrayList<Song> {
         return songs
+    }
+
+    fun getSong(path:String): Song? {
+        var returnSong: Song? = null
+         for(thisSong:Song in songs){
+             if(thisSong.path==path){
+                 returnSong=thisSong
+             }
+         }
+        return returnSong
     }
 
     //singleton behavior
     companion object{
         private var INSTANCE: SongRepository? = null
-        fun initialize(context: Context){
+        fun initialize(context: Context, givenSongsList: ArrayList<Song>){
             if(INSTANCE==null){
-                INSTANCE= SongRepository(context)
+                INSTANCE= SongRepository(context, givenSongsList)
             }
         }
         fun get():SongRepository{

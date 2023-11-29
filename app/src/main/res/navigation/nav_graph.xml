@@ -18,5 +18,9 @@
         android:id="@+id/songDetailFragment"
         android:name="com.example.myapplication.SongDetailFragment"
         android:label="SongDetailFragment"
-        tools:layout="@layout/fragment_song_detail"/>
+        tools:layout="@layout/fragment_song_detail">
+        <argument
+            android:name="songPath"
+            app:argType="string" />
+    </fragment>
 </navigation>

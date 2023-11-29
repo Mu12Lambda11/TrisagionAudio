@@ -1,6 +1,8 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -19,17 +21,19 @@ import com.example.myapplication.databinding.FragmentSongListBinding
 import kotlinx.coroutines.launch
 
 class SongListFragment : Fragment(){
+
     private var _binding: FragmentSongListBinding? =null
     private val binding
         get()= checkNotNull(_binding){
             "Cannot access binding because it is null. Is the view visible?"
         }
 
-     val songListViewModel: SongListViewModel by viewModels()
+     private val songListViewModel: SongListViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("CrimeListFragment", "Total Songs: ${songListViewModel.songs.size}")
         //TODO: update
         //setHasOptionsMenu(true)
     }
@@ -51,8 +55,12 @@ class SongListFragment : Fragment(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
                 val songs = songListViewModel.songs
-                binding.songRecyclerView.adapter=SongListAdapter(songs){
-                    findNavController().navigate(R.id.show_song_detail)
+                binding.songRecyclerView.adapter= context?.let {
+                    SongListAdapter(it,songs){ songPath ->
+                        findNavController().navigate(
+                            SongListFragmentDirections.showSongDetail(songPath)
+                        )
+                    }
                 }
             }
         }
