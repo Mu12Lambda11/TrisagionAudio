@@ -18,12 +18,13 @@ class SongRepository private constructor (context: Context, givenSongsList: Arra
     }
 
     fun getSong(path:String): Song? {
-        var returnSong: Song? = null
+        var returnSong: Song? =null
          for(thisSong:Song in songs){
              if(thisSong.path==path){
                  returnSong=thisSong
              }
          }
+
         return returnSong
     }
 

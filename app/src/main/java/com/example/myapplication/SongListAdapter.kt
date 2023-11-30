@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.content.Context
+import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.view.LayoutInflater
@@ -24,6 +25,7 @@ class SongListAdapter (
 
     override fun onBindViewHolder(holder: SongHolder, position: Int) {
         val songData = songs[position]
+        //MediaPlayerDriver.get().currentIndex=position
         holder.bind(songData, onSongClicked, context)
     }
 
@@ -35,9 +37,10 @@ class SongListAdapter (
 class SongHolder(private val binding: ListItemSongBinding) : RecyclerView.ViewHolder(binding.root){
 
 
+    //val mediaPlayer = MediaPlayerDriver.get().getMediaPlayer()
     fun bind(song:Song, onSongClicked: (songTitle: String) -> Unit, context: Context){
         binding.songTitle.text=song.title
-        binding.songLength.text=song.duration
+        binding.songLength.text=SongDetailFragment.formattedTime(song.duration.toInt()/1000)
 
         //album art retrieval
         val image = getAlbumArt(song.path)
@@ -51,13 +54,18 @@ class SongHolder(private val binding: ListItemSongBinding) : RecyclerView.ViewHo
         //click listener
         binding.root.setOnClickListener(){
             onSongClicked(song.path)
+            //mediaPlayer.reset()
         }
     }
-    private fun getAlbumArt(path: String): ByteArray? {
-        val retriever = MediaMetadataRetriever()
-        retriever.setDataSource(path)
-        val obtainedArt =retriever.embeddedPicture
-        retriever.release()
-        return obtainedArt
+
+    companion object{
+        fun getAlbumArt(path: String): ByteArray? {
+            val retriever = MediaMetadataRetriever()
+            retriever.setDataSource(path)
+            val obtainedArt =retriever.embeddedPicture
+            retriever.release()
+            return obtainedArt
+        }
     }
+
 }

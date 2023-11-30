@@ -1,21 +1,17 @@
 package com.example.myapplication
 
-import android.Manifest
 import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
-import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.io.File
-import java.lang.IllegalStateException
 
 class TrisagionApp: Application() {
 
@@ -34,6 +30,7 @@ class TrisagionApp: Application() {
         }
         //initialize after loading songs
         SongRepository.initialize(this, songs)
+
 
     }
 
@@ -73,8 +70,6 @@ class TrisagionApp: Application() {
 
 
                 val newSong= Song(newTitle,newPath,newDuration,newArtist,newAlbum)
-                //log to check
-                Log.e("path "+newPath,"Title:  "+newTitle,)
                 val file = File(newSong.path)
                 if(file.exists()) {
                     allSongs.add(newSong)

@@ -10,11 +10,13 @@ import kotlinx.coroutines.launch
 
 class SongDetailViewModel(songPath : String) : ViewModel(){
     private val songRepository=SongRepository.get()
-    private var song :Song? = null
+    var songs= ArrayList<Song>()
+    var song :Song? = null
 
     init{
         viewModelScope.launch {
             song=songRepository.getSong(songPath)
+            songs=songRepository.sendSongs()
         }
     }
 
@@ -22,6 +24,6 @@ class SongDetailViewModel(songPath : String) : ViewModel(){
 
 class SongDetailViewModelFactory( private val songPath : String):ViewModelProvider.Factory{
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SongDetailViewModel((songPath)) as T
+        return SongDetailViewModel(songPath) as T
     }
 }
