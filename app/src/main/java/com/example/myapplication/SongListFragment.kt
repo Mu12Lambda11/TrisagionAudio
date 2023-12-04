@@ -66,10 +66,6 @@ class SongListFragment : Fragment(){
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding=null
-    }
 
 
 }

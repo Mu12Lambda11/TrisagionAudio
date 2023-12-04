@@ -57,8 +57,8 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="268dp"
-        android:layout_height="46dp"
+        android:layout_width="319dp"
+        android:layout_height="96dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,6 +69,7 @@
             android:id="@+id/repeat_button"
             android:layout_width="45dp"
             android:layout_height="match_parent"
+            android:layout_marginEnd="20dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_repeat_off" />
 
@@ -76,27 +77,22 @@
             android:id="@+id/skip_prev_button"
             android:layout_width="45dp"
             android:layout_height="match_parent"
+            android:layout_marginEnd="25dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_skip_previous" />
 
         <ImageButton
-            android:id="@+id/play_button"
+            android:id="@+id/play_pause_button"
             android:layout_width="45dp"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_play" />
 
         <ImageButton
-            android:id="@+id/pause_button"
-            android:layout_width="45dp"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_pause" />
-
-        <ImageButton
             android:id="@+id/skip_next_button"
             android:layout_width="45dp"
             android:layout_height="match_parent"
+            android:layout_marginStart="25dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_skip_next" />
 
@@ -104,13 +100,14 @@
             android:id="@+id/shuffle_button"
             android:layout_width="45dp"
             android:layout_height="match_parent"
+            android:layout_marginStart="20dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_shuffle_off" />
 
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/backButton"
         android:layout_width="53dp"
         android:layout_height="41dp"
         android:layout_marginStart="8dp"

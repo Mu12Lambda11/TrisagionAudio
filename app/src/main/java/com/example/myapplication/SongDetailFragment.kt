@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -37,8 +36,9 @@ class SongDetailFragment : Fragment(){
         SongDetailViewModelFactory(args.songPath)
     }
     lateinit var mediaPlayer: MediaPlayer
-    var currentPosition by Delegates.notNull<Int>()
+    var currentSongPosition by Delegates.notNull<Int>()
     var allSongs= ArrayList<Song>()
+    var backupSongList = ArrayList<Song>()
     var shuffleSongs =false
     var repeatSongs=false
 
@@ -47,8 +47,17 @@ class SongDetailFragment : Fragment(){
 
         //Instantiate and setup MediaPlayer
         initMediaPlayer(songDetailViewModel.song)
+        //initialize song list
+        allSongs=songDetailViewModel.songs
+
         mediaPlayer = MediaPlayerDriver.get().getMediaPlayer()
-        currentPosition=MediaPlayerDriver.get().getMediaIndex()
+
+        var i = 0;
+        while(songDetailViewModel.song!=allSongs.get(i)){
+            i++
+        }
+        currentSongPosition=i;
+
 
         Log.d("SongDetailFragment", "Path is: ${args.songPath}")
 
@@ -60,17 +69,29 @@ class SongDetailFragment : Fragment(){
     ): View? {
         _binding=FragmentSongDetailBinding.inflate(layoutInflater, container, false)
 
-        //initialize song list
-        allSongs=songDetailViewModel.songs
+
         //load the selected song
-        loadSong(songDetailViewModel.song)
+        loadSongDetails(songDetailViewModel.song)
 
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
 
-        startPlaying(songDetailViewModel.song,mediaPlayer)
+
+        if(!mediaPlayer.isPlaying){
+            startPlaying(songDetailViewModel.song,mediaPlayer)
+        }else if(songDetailViewModel.song!!.title!=MediaPlayerDriver.get().getPrevSongTitle()){
+            //if the mediaplayer is playing and there is a song difference
+            mediaPlayer.reset()
+            refreshMediaPlayer(songDetailViewModel.song)
+            mediaPlayer = MediaPlayerDriver.get().getMediaPlayer()
+            startPlaying(songDetailViewModel.song,mediaPlayer)
+        }else{
+            //if it's the same song already playing, do nothing
+        }
+
+
 
         //Runnable object to parse the current song position
         this.activity?.runOnUiThread(object: Runnable{
@@ -92,14 +113,7 @@ class SongDetailFragment : Fragment(){
                     }
                 })
 
-                //Fill Out seekbar
-                val currentPosition = mediaPlayer.currentPosition/1000
-                val seekbarDuration = mediaPlayer.duration/1000
-                binding.seekBar.progress = currentPosition
-                binding.seekBar.max=seekbarDuration
-                binding.currentSongTime.text = formattedTime(currentPosition)
-                binding.songDuration.text = formattedTime(seekbarDuration)
-                val handler = Handler(Looper.getMainLooper()).postDelayed(this, 1000)
+                fillSeekbar(this)
 
             }
 
@@ -108,28 +122,41 @@ class SongDetailFragment : Fragment(){
         //Binding stuff
         binding.apply {
             //Button Setup
-            playButton.setOnClickListener(){
-                if(!mediaPlayer.isPlaying){
-                    mediaPlayer.start()
-                }
+            //TODO: Combine play and pause
+            playPauseButton.setOnClickListener(){
+                pausePlay()
             }
-            pauseButton.setOnClickListener(){
-                if(mediaPlayer.isPlaying){
-                    mediaPlayer.pause()
-                }
-            }
-            skipNextButton.setOnClickListener(){v->
+
+            skipNextButton.setOnClickListener {
                 playNextSong()
             }
-            skipPrevButton.setOnClickListener {v->
-                playPrevSong()
 
+
+            skipPrevButton.setOnClickListener {
+                playPrevSong()
             }
             shuffleButton.setOnClickListener {
+                if(!shuffleSongs){
+                    //on
+                    shufflePlaylist()
+                }else{
+                    //off
+                    restorePlayList()
+                }
 
             }
             repeatButton.setOnClickListener {
+                if(!repeatSongs){
+                    repeatSongs=true
+                    binding.repeatButton.setImageResource(R.drawable.ic_repeat_on)
+                }else{
+                    repeatSongs=false
+                    binding.repeatButton.setImageResource(R.drawable.ic_repeat_off)
+                }
+            }
 
+            backButton.setOnClickListener(){
+                closeFragment()
             }
 
             viewLifecycleOwner.lifecycleScope.launch {
@@ -143,16 +170,48 @@ class SongDetailFragment : Fragment(){
     }
 
 
-    fun loadSong(song:Song?){
+    private fun shufflePlaylist() {
+        backupSongList.addAll(allSongs)
+        allSongs.shuffle()
+        shuffleSongs=true
+        binding.shuffleButton.setImageResource(R.drawable.ic_shuffle_on)
+    }
+    private fun restorePlayList(){
+        allSongs.clear()
+        allSongs.addAll(backupSongList)
+        backupSongList.clear()
+
+        //reassess current index
+        var i = 0;
+        while(songDetailViewModel.song!=allSongs.get(i)){
+            i++
+        }
+        currentSongPosition=i;
+
+        shuffleSongs=false
+        binding.shuffleButton.setImageResource(R.drawable.ic_shuffle_off)
+    }
+
+    private fun closeFragment(){
+        requireActivity().supportFragmentManager.popBackStack()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MediaPlayerDriver.get().setPrevSongTitle(songDetailViewModel.song!!.title)
+    }
+
+
+    private fun loadSongDetails(song:Song?){
         binding.apply {
 
             if (song != null) {
                 //set title
-                songTitleDetail.setText(song.title)
+                songTitleDetail.text = song.title
                 //set artist
-                songArtistDetail.setText(song.artist)
+                songArtistDetail.text = song.artist
                 //set duration
-                songDuration.setText(formattedTime(song.duration.toInt()))
+                songDuration.text = formattedTime(song.duration.toInt())
                 //set album art
                 val image =SongHolder.getAlbumArt(song.path)
                 if(image!=null){
@@ -168,47 +227,98 @@ class SongDetailFragment : Fragment(){
         }
     }
 
-    fun playNextSong(){
-        if(currentPosition==songDetailViewModel.songs.size-1){
-            currentPosition+=1
+    fun fillSeekbar(runner :Runnable){
+        //Fill Out seekbar
+        val currentPosition = mediaPlayer.currentPosition/1000
+        val seekbarDuration = mediaPlayer.duration/1000
+        binding.currentSongTime.text = formattedTime(currentPosition)
+        binding.songDuration.text = formattedTime(seekbarDuration)
+        binding.seekBar.progress = currentPosition
+        binding.seekBar.max=seekbarDuration
+
+        val handler = Handler(Looper.getMainLooper()).postDelayed(runner, 1000)
+    }
+
+    private fun playNextSong(){
+        if(currentSongPosition!=songDetailViewModel.songs.size-1){
+            currentSongPosition+=1
+            mediaPlayer.stop()
+
+            val currentSong = allSongs[currentSongPosition]
+            songDetailViewModel.song=currentSong
+            loadSongDetails(songDetailViewModel.song)
+            refreshMediaPlayer(songDetailViewModel.song)
+            mediaPlayer=MediaPlayerDriver.get().getMediaPlayer()
+
+            startPlaying(songDetailViewModel.song,mediaPlayer)
+        }else if(currentSongPosition==songDetailViewModel.songs.size-1&&repeatSongs){
+            currentSongPosition=0
+            mediaPlayer.stop()
+
+            val currentSong = allSongs[currentSongPosition]
+            songDetailViewModel.song=currentSong
+            loadSongDetails(songDetailViewModel.song)
+            refreshMediaPlayer(songDetailViewModel.song)
+            mediaPlayer=MediaPlayerDriver.get().getMediaPlayer()
+
+            startPlaying(songDetailViewModel.song,mediaPlayer)
+        }
+
+    }
+
+    private fun playPrevSong(){
+        if(currentSongPosition==0|| (mediaPlayer.currentPosition/1000)>3){
             mediaPlayer.reset()
-            loadSong(allSongs[currentPosition])
+            refreshMediaPlayer(songDetailViewModel.song)
+            mediaPlayer=MediaPlayerDriver.get().getMediaPlayer()
+            startPlaying(songDetailViewModel.song,mediaPlayer)
+        }else {
+            currentSongPosition -= 1
+            mediaPlayer.stop()
+
+            val currentSong = allSongs[currentSongPosition]
+            songDetailViewModel.song = currentSong
+            loadSongDetails(songDetailViewModel.song)
+            refreshMediaPlayer(songDetailViewModel.song)
+            mediaPlayer = MediaPlayerDriver.get().getMediaPlayer()
+
+            startPlaying(songDetailViewModel.song, mediaPlayer)
         }
     }
-    fun shuffleOn(){
-        //TODO implement shuffle stuff by making another songlist
-    }
 
-    fun playPrevSong(){
-        if(currentPosition==0){
-            return
-        }
-        currentPosition=-1
-        mediaPlayer.reset()
-        loadSong(allSongs[currentPosition])
-    }
-
-    //TODO apply to class later
-    fun pausePlay(){
+    private fun pausePlay(){
         if(mediaPlayer.isPlaying){
             mediaPlayer.pause()
+            binding.playPauseButton.setImageResource(R.drawable.ic_pause)
         }else{
             mediaPlayer.start()
+            binding.playPauseButton.setImageResource(R.drawable.ic_play)
         }
     }
-    fun startPlaying(song: Song?, mediaPlayer:MediaPlayer){
+    private fun startPlaying(song: Song?, mediaPlayer:MediaPlayer){
         if(song!=null){
             mediaPlayer.start()
         }else{
             Toast.makeText(context, "Song pathing error!", Toast.LENGTH_SHORT)
         }
+
     }
 
-    fun initMediaPlayer(song: Song?){
+    private fun initMediaPlayer(song: Song?){
         if(song!=null){
             //Initialize the media player
             val uri = Uri.parse(song.path)
             context?.let { MediaPlayerDriver.initialize(it, uri) }
+        }else{
+            Toast.makeText(context, "Song pathing error!", Toast.LENGTH_SHORT)
+        }
+    }
+
+    private fun refreshMediaPlayer(song:Song?){
+        if(song!=null){
+            //Refresh the media player
+            val uri = Uri.parse(song.path)
+            context?.let { MediaPlayerDriver.get().setMediaPlayer(it,uri) }
         }else{
             Toast.makeText(context, "Song pathing error!", Toast.LENGTH_SHORT)
         }

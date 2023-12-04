@@ -8,15 +8,25 @@ import java.lang.IllegalStateException
 
 class MediaPlayerDriver constructor(context: Context, uri: Uri) {
 
-    private val mediaPlayerInstance = MediaPlayer.create(context,uri)
-    var currentIndex = -1
+    private var mediaPlayerInstance = MediaPlayer.create(context,uri)
+    //boolean for if the last song accessed and the current song are he same
+    private var prevSongTitle=""
+
 
     fun getMediaPlayer(): MediaPlayer {
         return mediaPlayerInstance
     }
-    fun getMediaIndex():Int{
-        return currentIndex
+
+    fun setMediaPlayer(context: Context, uri: Uri){
+        mediaPlayerInstance= MediaPlayer.create(context,uri)
     }
+    fun setPrevSongTitle(string: String){
+        prevSongTitle=string
+    }
+    fun getPrevSongTitle(): String{
+        return prevSongTitle
+    }
+
     //singleton behavior
     companion object{
         private var INSTANCE: MediaPlayerDriver? = null

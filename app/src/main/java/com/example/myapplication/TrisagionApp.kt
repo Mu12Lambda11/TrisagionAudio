@@ -71,7 +71,16 @@ class TrisagionApp: Application() {
 
                 val newSong= Song(newTitle,newPath,newDuration,newArtist,newAlbum)
                 val file = File(newSong.path)
-                if(file.exists()) {
+
+                var noTitleConflict=true
+                var i=0
+                while(i<allSongs.size&&!allSongs.isEmpty()){
+                    if(allSongs.get(i).title==newTitle)
+                        noTitleConflict=false
+                    i++
+                }
+
+                if(file.exists() && noTitleConflict) {
                     allSongs.add(newSong)
                 }
             }

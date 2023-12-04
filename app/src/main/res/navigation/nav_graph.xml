@@ -22,5 +22,8 @@
         <argument
             android:name="songPath"
             app:argType="string" />
+        <action
+            android:id="@+id/detailToList"
+            app:destination="@id/songListFragment" />
     </fragment>
 </navigation>
