@@ -25,5 +25,13 @@
         <action
             android:id="@+id/detailToList"
             app:destination="@id/songListFragment" />
+        <action
+            android:id="@+id/show_mixer"
+            app:destination="@id/mixerFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/mixerFragment"
+        android:name="com.example.myapplication.MixerFragment"
+        android:label="MixerFragment"
+        tools:layout="@layout/fragment_mixer"/>
 </navigation>

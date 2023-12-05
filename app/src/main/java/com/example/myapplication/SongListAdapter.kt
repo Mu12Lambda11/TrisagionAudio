@@ -25,7 +25,6 @@ class SongListAdapter (
 
     override fun onBindViewHolder(holder: SongHolder, position: Int) {
         val songData = songs[position]
-        //MediaPlayerDriver.get().currentIndex=position
         holder.bind(songData, onSongClicked, context)
     }
 
@@ -37,7 +36,6 @@ class SongListAdapter (
 class SongHolder(private val binding: ListItemSongBinding) : RecyclerView.ViewHolder(binding.root){
 
 
-    //val mediaPlayer = MediaPlayerDriver.get().getMediaPlayer()
     fun bind(song:Song, onSongClicked: (songTitle: String) -> Unit, context: Context){
         binding.songTitle.text=song.title
         binding.songLength.text=SongDetailFragment.formattedTime(song.duration.toInt()/1000)
@@ -54,7 +52,6 @@ class SongHolder(private val binding: ListItemSongBinding) : RecyclerView.ViewHo
         //click listener
         binding.root.setOnClickListener(){
             onSongClicked(song.path)
-            //mediaPlayer.reset()
         }
     }
 

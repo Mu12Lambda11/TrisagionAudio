@@ -7,15 +7,20 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.myapplication.databinding.FragmentSongDetailBinding
@@ -23,7 +28,7 @@ import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 
-class SongDetailFragment : Fragment(){
+class SongDetailFragment : Fragment(), MenuProvider{
     private var _binding: FragmentSongDetailBinding? =null
     private val binding
         get()= checkNotNull(_binding){
@@ -78,9 +83,11 @@ class SongDetailFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
 
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         if(!mediaPlayer.isPlaying){
             startPlaying(songDetailViewModel.song,mediaPlayer)
+            MediaPlayerDriver.get().setPrevSongTitle(songDetailViewModel.song!!.title)
         }else if(songDetailViewModel.song!!.title!=MediaPlayerDriver.get().getPrevSongTitle()){
             //if the mediaplayer is playing and there is a song difference
             mediaPlayer.reset()
@@ -289,10 +296,10 @@ class SongDetailFragment : Fragment(){
     private fun pausePlay(){
         if(mediaPlayer.isPlaying){
             mediaPlayer.pause()
-            binding.playPauseButton.setImageResource(R.drawable.ic_pause)
+            binding.playPauseButton.setImageResource(R.drawable.ic_play)
         }else{
             mediaPlayer.start()
-            binding.playPauseButton.setImageResource(R.drawable.ic_play)
+            binding.playPauseButton.setImageResource(R.drawable.ic_pause)
         }
     }
     private fun startPlaying(song: Song?, mediaPlayer:MediaPlayer){
@@ -324,7 +331,28 @@ class SongDetailFragment : Fragment(){
         }
     }
 
+
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.fragment_song_list, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return if(menuItem.itemId==R.id.equalizer){
+            findNavController().navigate(SongDetailFragmentDirections.showMixer())
+            true
+        }else{
+            false
+        }
+
+    }
+
+
     companion object{
+        fun getMediaPlayerDriver():MediaPlayerDriver{
+            return MediaPlayerDriver.get()
+        }
+
         //Time Formatting
         fun formattedTime(currentPosition: Int):String {
             var totalOut=""

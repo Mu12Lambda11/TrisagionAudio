@@ -86,7 +86,7 @@
             android:layout_width="45dp"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_play" />
+            android:src="@drawable/ic_pause" />
 
         <ImageButton
             android:id="@+id/skip_next_button"

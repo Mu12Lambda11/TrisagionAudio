@@ -6,8 +6,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.AndroidViewModel
@@ -34,8 +36,7 @@ class SongListFragment : Fragment(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("CrimeListFragment", "Total Songs: ${songListViewModel.songs.size}")
-        //TODO: update
-        //setHasOptionsMenu(true)
+
     }
 
     override fun onCreateView(
@@ -52,6 +53,8 @@ class SongListFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
                 val songs = songListViewModel.songs
@@ -65,6 +68,7 @@ class SongListFragment : Fragment(){
             }
         }
     }
+
 
 
 
