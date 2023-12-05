@@ -20,6 +20,7 @@
             android:id="@+id/midBandBar"
             android:layout_width="130dp"
             android:layout_height="85dp"
+            android:progress="50"
             android:rotation="270"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/lowBandBar"
@@ -29,6 +30,7 @@
             android:id="@+id/highBandBar"
             android:layout_width="130dp"
             android:layout_height="85dp"
+            android:progress="50"
             android:rotation="270"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/midBandBar"
@@ -39,6 +41,7 @@
             android:layout_width="130dp"
             android:layout_height="85dp"
             android:layout_marginStart="8dp"
+            android:progress="50"
             android:rotation="270"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -90,13 +93,37 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.488" />
 
-    <ImageView
-        android:id="@+id/imageView"
+    <ImageButton
+        android:id="@+id/eqButton"
         android:layout_width="214dp"
         android:layout_height="116dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        app:srcCompat="@drawable/ic_equalizer_on" />
+        app:srcCompat="@drawable/ic_equalizer_off" />
+
+    <TextView
+        android:id="@+id/eqBtnText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eqButton" />
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="53dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="138dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_back_button" />
 </androidx.constraintlayout.widget.ConstraintLayout>
