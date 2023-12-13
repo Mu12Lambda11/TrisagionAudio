@@ -19,10 +19,7 @@ class TrisagionApp: Application() {
      override fun onCreate() {
         super.onCreate()
 
-        if(!permission()){
-            requestPermission(this)
-            return
-        }
+
         songs=loadSongs(this)
 
         if(songs.size==0){
@@ -34,18 +31,7 @@ class TrisagionApp: Application() {
 
     }
 
-    private fun permission(): Boolean {
-        val result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-        return result== PackageManager.PERMISSION_GRANTED
-    }
 
-    private fun requestPermission(context: Context){
-        val activity = context as Activity
-        if(ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)){
-            Toast.makeText(this, "A music player needs audio file permissions. Please allow access.", Toast.LENGTH_SHORT)
-        }
-        ActivityCompat.requestPermissions(activity, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 123 )
-    }
     fun loadSongs(context: Context): ArrayList<Song> {
         val allSongs= ArrayList<Song>()
         val uri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
